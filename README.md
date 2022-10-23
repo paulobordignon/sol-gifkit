@@ -10,5 +10,5 @@ Execution Instruction:
 2. Run `npm run start` to start the project.
 
 <p align="center">
-Bootcamp by WEB3DEV
+Built in a WEB3DEV bootcamp
 </p>
