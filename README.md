@@ -1,14 +1,14 @@
-# Bootcamp WEB3DEV - GIF Portal Solana
+<p align="center">
+GIFT KIT - A Solana program
+</p>
 
-### **Bem-vind@s 👋**
-Para iniciar esse bootcamp, clone o repositório e execute esses comandos:
+The main difference between Solana programs and Ethereum smart contracts is programs are stateless. In a smart contract is possible to keep the state registering data in a variable. In a Solana program, the users have a lot of accounts, and the programs can communicate with these accounts registering data about the program.
 
-1. Rode `npm install` no diretório raiz
-2. Rode `npm run start` para iniciar o projeto
-3. Bora codar!
+Execution Instruction:
 
-### **O que é essa pasta .vscode?**
-Se você usa VSCode para construir sua app, incluimos uma lista de extensões sugeridas para te ajudar nesse projeto! Assim que abrir o VSCode, verá um popup perguntando se deseja baixar essas extensões :).
+1. Run `npm install` to install the dependencies;
+2. Run `npm run start` to start the project.
 
-### **Perguntas?**
-Se tiver perguntas, entre [na página do Curso](https://bootcamp.web3dev.com.br/courses/Solana_And_Web3), faça o link com seu Discord. No [Discord da comunidade](https://discord.web3dev.com.br) você terá acesso aos canais de ajuda e aos monitores de bootcamp.
+<p align="center">
+Bootcamp by WEB3DEV
+</p>
