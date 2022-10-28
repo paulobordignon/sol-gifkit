@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import twitterLogo from "./assets/twitter-logo.svg";
 import "./App.css";
 import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { Program, Provider, web3 } from "@project-serum/anchor";
@@ -7,50 +6,45 @@ import { Program, Provider, web3 } from "@project-serum/anchor";
 import idl from "./idl.json";
 import kp from "./keypair.json";
 
-// SystemProgram é uma referencia ao 'executor' (runtime) da Solana!
+// SystemProgram is the 'executor' (runtime) of Solana!
 const { SystemProgram } = web3;
 
 const arr = Object.values(kp._keypair.secretKey);
 const secret = new Uint8Array(arr);
 const baseAccount = web3.Keypair.fromSecretKey(secret);
 
-// Obtém o id do nosso programa do arquivo IDL.
+// Get our program's id from IDL file.
 const programID = new PublicKey(idl.metadata.address);
 
-// Define nossa rede para devnet.
+// Defines our network to devnet.
 const network = clusterApiUrl("devnet");
 
-// Controla como queremos 'saber' quando uma transação está 'pronta'.
+// Controls how we want to 'know' when a transaction is 'ready'
 const opts = {
   preflightCommitment: "processed",
 };
-
-// Todas suas contantes do Twitter e dos GIFs que você tiver.
 
 const App = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [gifList, setGifList] = useState([]);
 
-  /*
-   * Essa função possui a lógica para definir se a Phantom Wallet
-   * está conectada ou não
-   */
   const checkIfWalletIsConnected = async () => {
     try {
       const { solana } = window;
 
       if (solana) {
         if (solana.isPhantom) {
-          console.log("Phantom wallet encontrada!");
+          console.log("Phantom wallet found!");
           const response = await solana.connect({ onlyIfTrusted: true });
+          setWalletAddress(response.publicKey.toString());
           console.log(
-            "Conectado com a Chave Pública:",
+            "Connected with public key:",
             response.publicKey.toString()
           );
         }
       } else {
-        alert("Objeto Solana não encontrado! Instale a Phantom Wallet 👻");
+        alert("Please, install the Phantom Wallet 👻");
       }
     } catch (error) {
       console.error(error);
@@ -62,10 +56,7 @@ const App = () => {
 
     if (solana) {
       const response = await solana.connect();
-      console.log(
-        "Conectado com a Chave Pública:",
-        response.publicKey.toString()
-      );
+      console.log("Connected with public key:", response.publicKey.toString());
       setWalletAddress(response.publicKey.toString());
     }
   };
@@ -85,26 +76,13 @@ const App = () => {
     return provider;
   };
 
-  /*
-   * Queremos renderizar essa UI quando o usuário não conectou
-   * sua carteira ainda.
-   */
-  const renderNotConnectedContainer = () => (
-    <button
-      className="cta-button connect-wallet-button"
-      onClick={connectWallet}
-    >
-      Conecte sua carteira
-    </button>
-  );
-
   const sendGif = async () => {
     if (inputValue.length === 0) {
-      console.log("Nenhum link de GIF foi dado!");
+      console.log("Please, fill out the link!");
       return;
     }
     setInputValue("");
-    console.log("Link do GIF:", inputValue);
+    console.log("GIF Link:", inputValue);
     try {
       const provider = getProvider();
       const program = new Program(idl, programID, provider);
@@ -115,22 +93,13 @@ const App = () => {
           user: provider.wallet.publicKey,
         },
       });
-      console.log("GIF enviado com sucesso para o programa", inputValue);
+      console.log("GIF has been sent with success", inputValue);
 
       await getGifList();
     } catch (error) {
-      console.log("Erro enviando GIF:", error);
+      console.log("Error during sending GIF:", error);
     }
   };
-
-  // UseEffects
-  useEffect(() => {
-    const onLoad = async () => {
-      await checkIfWalletIsConnected();
-    };
-    window.addEventListener("load", onLoad);
-    return () => window.removeEventListener("load", onLoad);
-  }, []);
 
   useEffect(() => {
     const onLoad = async () => {
@@ -148,17 +117,17 @@ const App = () => {
         baseAccount.publicKey
       );
 
-      console.log("Conta obtida", account);
+      console.log("Account obtained", account);
       setGifList(account.gifList);
     } catch (error) {
-      console.log("Erro em getGifList: ", error);
+      console.log("Error getGifList: ", error);
       setGifList(null);
     }
   };
 
   useEffect(() => {
     if (walletAddress) {
-      console.log("Obtendo a lista de GIF...");
+      console.log("Obtaining the GIF list...");
       getGifList();
     }
   }, [walletAddress]);
@@ -177,17 +146,31 @@ const App = () => {
         signers: [baseAccount],
       });
       console.log(
-        "BaseAccount criado com sucesso com o endereço :",
+        "BaseAccount has been created :",
         baseAccount.publicKey.toString()
       );
       await getGifList();
     } catch (error) {
-      console.log("Erro criando uma nova BaseAccount:", error);
+      console.log("Error during the creation of BaseAccount:", error);
     }
   };
 
+  const renderNotConnectedContainer = () => (
+    <div className="header-container">
+      <p className="header">🖼 Public GIFs repository 🖼</p>
+      <p className="sub-text">You can share with me your favorite GIF ✨</p>
+      <p className="alert">The program was deployed on Solana Devnet!</p>
+      <button
+        className="cta-button connect-wallet-button"
+        onClick={connectWallet}
+      >
+        Connect Wallet
+      </button>
+    </div>
+  );
+
   const renderConnectedContainer = () => {
-    // Se chegarmos aqui, significa que a conta do programa não foi inicializada.
+    // Was not the program account initialized?
     if (gifList === null) {
       return (
         <div className="connected-container">
@@ -195,12 +178,12 @@ const App = () => {
             className="cta-button submit-gif-button"
             onClick={createGifAccount}
           >
-            Fazer inicialização única para conta do programa GIF
+            Single boot for GIF program account
           </button>
         </div>
       );
     }
-    // Caso contrário, estamos bem! A conta existe. Usuários podem submeter GIFs.
+    // The program account is initialized then users can send gifs.
     else {
       return (
         <div className="connected-container">
@@ -212,19 +195,18 @@ const App = () => {
           >
             <input
               type="text"
-              placeholder="Entre com o link do GIF!"
+              placeholder="Fill out here the GIF link!"
               value={inputValue}
               onChange={onInputChange}
             />
             <button type="submit" className="cta-button submit-gif-button">
-              Enviar
+              Send
             </button>
           </form>
           <div className="gif-grid">
-            {/* Usamos o indice (index) como chave (key), também o 'src' agora é 'item.gifLink' */}
             {gifList.map((item, index) => (
               <div className="gif-item" key={index}>
-                <img src={item.gifLink} />
+                <img src={item.gifLink} alt="gif" />
               </div>
             ))}
           </div>
@@ -236,21 +218,8 @@ const App = () => {
   return (
     <div className="App">
       <div className="container">
-        <div className="header-container">
-          <p className="header">🖼 Meu Portal de GIF 🖼</p>
-          <p className="sub-text">Veja sua coleção de GIF no metaverso ✨</p>
-          {!walletAddress && renderNotConnectedContainer()}
-          {/* Precisamos apenas adicionar o inverso aqui! */}
-          {walletAddress && renderConnectedContainer()}
-        </div>
-        <div className="footer-container">
-          <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
-          <a
-            className="footer-text"
-            target="_blank"
-            rel="noreferrer"
-          >{`feito por @`}</a>
-        </div>
+        {!walletAddress && renderNotConnectedContainer()}
+        {walletAddress && renderConnectedContainer()}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-// Salve para o Nader Dabit por ajudar com isso!
+// Thanks, Nader Dabit for help with this!
 // https://twitter.com/dabit3
 
 const fs = require("fs");
