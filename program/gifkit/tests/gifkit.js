@@ -2,7 +2,7 @@ const anchor = require("@project-serum/anchor");
 const { SystemProgram } = anchor.web3;
 
 const main = async () => {
-  console.log("🚀 Iniciando testes...");
+  console.log("🚀 Starting tests...");
 
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -17,12 +17,11 @@ const main = async () => {
     },
     signers: [baseAccount],
   });
-  console.log("📝 Sua assinatura de transação", tx);
+  console.log("📝 Your transaction signature", tx);
 
   let account = await program.account.baseAccount.fetch(baseAccount.publicKey);
   console.log("👀 GIF Count", account.totalGifs.toString());
 
-  // Você precisará agora passar um link do GIF para a função! Você também precisará passar o usuário que está enviando o GIF!
   await program.rpc.addGif(
     "https://media2.giphy.com/media/rzCb3XwgyZLI58aWFD/giphy.gif?cid=ecf05e47idk1vnlwsjzerlods34ua5ew3cnxa6hxhyyn6ynu&rid=giphy.gif&ct=g",
     {
@@ -33,11 +32,11 @@ const main = async () => {
     }
   );
 
-  // Chama a conta
+  // Call the account
   account = await program.account.baseAccount.fetch(baseAccount.publicKey);
   console.log("👀 GIF Count", account.totalGifs.toString());
 
-  // Acessa o gif_list na conta
+  // Access the gif_list on account
   console.log("👀 GIF List", account.gifList);
 };
 

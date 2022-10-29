@@ -11,18 +11,18 @@ pub mod gifkit {
     Ok(())
   }
 
-  // A função agora aceita um parâmetro gif_link do usuário. Também referenciamos o usuário do Contexto
+  // The function accept an parameter gif_link. Also reference the context user.
   pub fn add_gif(ctx: Context<AddGif>, gif_link: String) -> Result <()> {
     let base_account = &mut ctx.accounts.base_account;
     let user = &mut ctx.accounts.user;
 
-	// Constroi o struct.
+	// Construct the struct.
     let item = ItemStruct {
       gif_link: gif_link.to_string(),
       user_address: *user.to_account_info().key,
     };
 
-	// Adiciona ele ao array gif_list.
+	// Add on gif_list array.
     base_account.gif_list.push(item);
     base_account.total_gifs += 1;
     Ok(())
@@ -38,7 +38,7 @@ pub struct StartStuffOff<'info> {
   pub system_program: Program <'info, System>,
 }
 
-// Adicione o signatário que chama o método AddGif ao struct para que possamos salvá-lo
+// Add the signer that calls the AddGif method to the struct so we can save it
 #[derive(Accounts)]
 pub struct AddGif<'info> {
   #[account(mut)]
@@ -47,7 +47,7 @@ pub struct AddGif<'info> {
   pub user: Signer<'info>,
 }
 
-// Crie uma estrutura personalizada para trabalharmos.
+// Custom struct.
 #[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct ItemStruct {
     pub gif_link: String,
@@ -57,6 +57,6 @@ pub struct ItemStruct {
 #[account]
 pub struct BaseAccount {
     pub total_gifs: u64,
-	// Anexe um vetor do tipo ItemStruct à conta.
+	  // Append a vector of type ItemStruct to the account.
     pub gif_list: Vec<ItemStruct>,
 }
